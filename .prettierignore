@@ -1,0 +1,19 @@
+# dependencies
+node_modules
+
+# build output
+.next
+out
+build
+coverage
+
+# generated / lock files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+next-env.d.ts
+
+# misc
+public
+*.min.js
+.vercel
