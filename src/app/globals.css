@@ -1,26 +1,197 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------
+   1. Semantic color values (the only place raw hex codes live)
+   Dark mode later = add a `.dark { ... }` block overriding these.
+   Values are sampled by eye from the mock; verify with an eyedropper.
+------------------------------------------------------------------- */
 :root {
+  --radius: 0.75rem;
+
+  /* Surfaces and text */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --muted: #f1f6f5; /* stats strip */
+  --muted-foreground: #4b5563; /* body copy, tool names */
+  --secondary: #eef1f0; /* inactive pills */
+  --secondary-foreground: #111827;
+  --accent: #e3ecea; /* media placeholders */
+  --accent-foreground: #111827;
+
+  /* Brand */
+  --primary: #0f766e; /* buttons, IDs, eyebrows */
+  --primary-foreground: #ffffff;
+
+  /* Lines and focus */
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #0f766e;
+
+  /* Feedback (forms only; not in the mock, kept in-family) */
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+
+  /* Dark bands: specialty section and CTA footer */
+  --deep: #0f3d3a;
+  --deep-card: #16524e;
+  --deep-thumb: #1f6f69;
+  --deep-border: #1f6560;
+  --deep-foreground: #ffffff;
+  --deep-muted: #a7c4c1;
+  --deep-eyebrow: #5fd3c1;
+  --ink: #111827;
+  --ink-foreground: #ffffff;
+  --ink-muted: #cbd5d3;
+
+  /* Scrim behind sheets and dialogs */
+  --overlay: rgb(17 24 39 / 0.5);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ------------------------------------------------------------------
+   2. Static tokens (no var() references)
+------------------------------------------------------------------- */
+@theme {
+  /* Layout widths: use as max-w-page / max-w-narrow */
+  --container-page: 72rem;
+  --container-narrow: 56rem;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Vertical rhythm between page sections: py-section */
+  --spacing-section: 5rem;
+
+  /* Type scale: text-display, text-heading, text-title, text-lead, ... */
+  --text-display: clamp(2.5rem, 1.6rem + 3.4vw, 3.5rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
+
+  --text-heading: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+  --text-heading--line-height: 1.15;
+  --text-heading--letter-spacing: -0.02em;
+
+  --text-title: 1.125rem;
+  --text-title--line-height: 1.4;
+
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.6;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1rem;
+  --text-eyebrow--letter-spacing: 0.12em;
+
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.25rem;
+
+  /* Motion: calm and quick */
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-up: fade-up 0.5s var(--ease-standard) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ------------------------------------------------------------------
+   3. Tokens that point at the variables above
+------------------------------------------------------------------- */
+@theme inline {
+  /* Remove Tailwind's default palette and shadows so only our tokens exist */
+  --color-*: initial;
+  --shadow-*: initial;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-deep: var(--deep);
+  --color-deep-card: var(--deep-card);
+  --color-deep-thumb: var(--deep-thumb);
+  --color-deep-border: var(--deep-border);
+  --color-deep-foreground: var(--deep-foreground);
+  --color-deep-muted: var(--deep-muted);
+  --color-deep-eyebrow: var(--deep-eyebrow);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-ink-muted: var(--ink-muted);
+  --color-overlay: var(--overlay);
+
+  /* Radius: 8px buttons and inputs, 12px, 16px cards, 20px; pills use rounded-full */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 8px);
+
+  /* The design is flat. Only floating layers (sheet, menus) get elevation. */
+  --shadow-overlay: 0 8px 30px rgb(17 24 39 / 0.12);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* ------------------------------------------------------------------
+   4. Base styles
+------------------------------------------------------------------- */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* clears the sticky header on anchor jumps */
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   5. Reduced motion: honor the user's OS setting everywhere
+------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
